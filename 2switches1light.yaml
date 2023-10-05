@@ -1,0 +1,59 @@
+blueprint:
+  name: Two Switch Light Control
+  description: Control one light with two switches supporting single, double, and long-press actions.
+  domain: automation
+  input:
+    switch1_entity:
+      name: First Switch Entity
+      description: The first switch entity.
+      selector:
+        entity:
+          domain: switch
+    switch2_entity:
+      name: Second Switch Entity
+      description: The second switch entity.
+      selector:
+        entity:
+          domain: switch
+    light_entity:
+      name: Light Entity
+      description: The light to control.
+      selector:
+        entity:
+          domain: light
+
+mode: parallel
+
+trigger:
+  - platform: state
+    entity_id: !input switch1_entity
+  - platform: state
+    entity_id: !input switch2_entity
+
+variables:
+  click_type: "{{ trigger.to_state.attributes.click_type }}"
+  button_id: "{{ 'switch1' if trigger.entity_id == input.switch1_entity else 'switch2' }}"
+  light_target: "{{ input.light_entity }}"
+
+action:
+  - choose:
+      - conditions:
+          - "{{ click_type == 'single' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
+
+      - conditions:
+          - "{{ click_type == 'double' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
+
+      - conditions:
+          - "{{ click_type == 'long' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
