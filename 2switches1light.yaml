@@ -1,35 +1,35 @@
 blueprint:
-  name: Two Switch Light Control
-  description: Control one light with two switches supporting single, double, and long-press actions.
+  name: Zigbee Button Light Control
+  description: Control different light entities with Zigbee buttons supporting single, double, and long-press actions.
   domain: automation
   input:
-    switch1_entity:
-      name: First Switch Entity
-      description: The first switch entity.
+    button1_entity:
+      name: First Zigbee Button Entity
+      description: The entity ID of the first Zigbee button.
       selector:
         entity:
-          domain: switch
-    switch2_entity:
-      name: Second Switch Entity
-      description: The second switch entity.
+          domain: binary_sensor
+    button2_entity:
+      name: Second Zigbee Button Entity
+      description: The entity ID of the second Zigbee button.
       selector:
         entity:
-          domain: switch
+          domain: binary_sensor
     full_light_entity:
       name: Full Light Entity
-      description: The light entity for full light mode.
+      description: The entity ID of the light for full light mode.
       selector:
         entity:
           domain: light
     night_light_entity:
       name: Night Light Entity
-      description: The light entity for night light mode.
+      description: The entity ID of the light for night light mode.
       selector:
         entity:
           domain: light
     ambient_light_entity:
       name: Ambient Light Entity
-      description: The light entity for ambient light mode.
+      description: The entity ID of the light for ambient light mode.
       selector:
         entity:
           domain: light
@@ -38,13 +38,13 @@ mode: parallel
 
 trigger:
   - platform: state
-    entity_id: !input switch1_entity
+    entity_id: !input button1_entity
   - platform: state
-    entity_id: !input switch2_entity
+    entity_id: !input button2_entity
 
 variables:
-  click_type: "{{ trigger.to_state.attributes.click_type }}"
-  button_id: "{{ 'switch1' if trigger.entity_id == input.switch1_entity else 'switch2' }}"
+  click_type: "{{ trigger.to_state.state }}"
+  button_id: "{{ 'button1' if trigger.entity_id == input.button1_entity else 'button2' }}"
   full_light_target: "{{ input.full_light_entity }}"
   night_light_target: "{{ input.night_light_entity }}"
   ambient_light_target: "{{ input.ambient_light_entity }}"
@@ -53,7 +53,7 @@ action:
   - choose:
       - conditions:
           - "{{ click_type == 'single' }}"
-          - "{{ button_id == 'switch1' }}"
+          - "{{ button_id == 'button1' }}"
         sequence:
           - service: light.toggle
             target:
@@ -61,7 +61,7 @@ action:
 
       - conditions:
           - "{{ click_type == 'double' }}"
-          - "{{ button_id == 'switch1' }}"
+          - "{{ button_id == 'button1' }}"
         sequence:
           - service: light.toggle
             target:
@@ -69,7 +69,7 @@ action:
 
       - conditions:
           - "{{ click_type == 'long' }}"
-          - "{{ button_id == 'switch1' }}"
+          - "{{ button_id == 'button1' }}"
         sequence:
           - service: light.toggle
             target:
@@ -77,7 +77,7 @@ action:
 
       - conditions:
           - "{{ click_type == 'single' }}"
-          - "{{ button_id == 'switch2' }}"
+          - "{{ button_id == 'button2' }}"
         sequence:
           - service: light.toggle
             target:
@@ -85,7 +85,7 @@ action:
 
       - conditions:
           - "{{ click_type == 'double' }}"
-          - "{{ button_id == 'switch2' }}"
+          - "{{ button_id == 'button2' }}"
         sequence:
           - service: light.toggle
             target:
@@ -93,9 +93,10 @@ action:
 
       - conditions:
           - "{{ click_type == 'long' }}"
-          - "{{ button_id == 'switch2' }}"
+          - "{{ button_id == 'button2' }}"
         sequence:
           - service: light.toggle
             target:
               entity_id: !input ambient_light_entity
+
 
