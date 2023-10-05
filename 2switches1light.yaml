@@ -39,6 +39,7 @@ action:
   - choose:
       - conditions:
           - "{{ click_type == 'single' }}"
+          - "{{ button_id == 'switch1' }}"
         sequence:
           - service: light.toggle
             target:
@@ -46,6 +47,7 @@ action:
 
       - conditions:
           - "{{ click_type == 'double' }}"
+          - "{{ button_id == 'switch1' }}"
         sequence:
           - service: light.toggle
             target:
@@ -53,7 +55,33 @@ action:
 
       - conditions:
           - "{{ click_type == 'long' }}"
+          - "{{ button_id == 'switch1' }}"
         sequence:
           - service: light.toggle
             target:
               entity_id: !input light_entity
+
+      - conditions:
+          - "{{ click_type == 'single' }}"
+          - "{{ button_id == 'switch2' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
+
+      - conditions:
+          - "{{ click_type == 'double' }}"
+          - "{{ button_id == 'switch2' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
+
+      - conditions:
+          - "{{ click_type == 'long' }}"
+          - "{{ button_id == 'switch2' }}"
+        sequence:
+          - service: light.toggle
+            target:
+              entity_id: !input light_entity
+
